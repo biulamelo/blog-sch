@@ -1,0 +1,24 @@
+[build]
+  command = "npm run build"
+  publish = "_site"
+  functions = "netlify/functions"
+
+# Reforço de segurança básico (não impede cópia total, mas melhora)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# CMS admin
+[[redirects]]
+  from = "/admin"
+  to = "/admin/"
+  status = 301
+
+# Identity endpoints (Netlify cuida, mas mantém roteamento)
+[[redirects]]
+  from = "/.netlify/identity/*"
+  to = "/.netlify/identity/:splat"
+  status = 200

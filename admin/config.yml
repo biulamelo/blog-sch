@@ -1,0 +1,95 @@
+backend:
+  name: git-gateway
+  branch: main
+media_folder: assets/posts
+public_folder: /assets/posts
+publish_mode: editorial_workflow
+collections:
+- name: posts
+  label: Posts (Públicos)
+  folder: content/posts
+  create: true
+  slug: '{{slug}}'
+  fields:
+  - label: Título
+    name: title
+    widget: string
+  - label: Slug (URL)
+    name: slug
+    widget: string
+    hint: 'Ex: meu-post-novo (sem acentos, sem espaços)'
+  - label: Data
+    name: date
+    widget: datetime
+    format: YYYY-MM-DD
+    time_format: false
+    picker_utc: true
+  - label: Categoria
+    name: category
+    widget: string
+  - label: Capa
+    name: cover
+    widget: image
+    required: false
+  - label: Resumo (card)
+    name: excerpt
+    widget: text
+  - label: Autor
+    name: author
+    widget: string
+    default: Bíula Melo
+  - label: Premium?
+    name: premium
+    widget: boolean
+    default: false
+  - label: Conteúdo
+    name: body
+    widget: markdown
+  - label: Layout
+    name: layout
+    widget: hidden
+    default: layouts/post.njk
+- name: premium
+  label: Posts (Premium)
+  folder: content/premium
+  create: true
+  slug: '{{slug}}'
+  fields:
+  - label: Título
+    name: title
+    widget: string
+  - label: Slug (URL)
+    name: slug
+    widget: string
+  - label: Data
+    name: date
+    widget: datetime
+    format: YYYY-MM-DD
+    time_format: false
+    picker_utc: true
+  - label: Categoria
+    name: category
+    widget: string
+    default: Premium
+  - label: Capa
+    name: cover
+    widget: image
+    required: false
+  - label: Resumo (card)
+    name: excerpt
+    widget: text
+  - label: Autor
+    name: author
+    widget: string
+    default: Bíula Melo
+  - label: Premium?
+    name: premium
+    widget: boolean
+    default: true
+  - label: Conteúdo
+    name: body
+    widget: markdown
+  - label: Layout
+    name: layout
+    widget: hidden
+    default: layouts/post.njk

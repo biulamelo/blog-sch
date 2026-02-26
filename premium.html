@@ -1,0 +1,169 @@
+---
+layout: false
+title: Conteúdo Premium
+---
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <title>Premium | Blog SCH</title>
+  <link href="assets/styles.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <div class="navbar">
+      <a aria-label="Instituto Completude Humana - Início" class="brand" href="index.html">
+        <div class="brand-badge"><img alt="Logo Instituto Completude Humana" src="assets/logo_instituto.png"/></div>
+        <div>
+          <div class="brand-name">INSTITUTO COMPLETUDE HUMANA</div>
+          <span class="brand-tag">Escola de Educação para o Segundo Nascimento</span>
+        </div>
+      </a>
+      <nav aria-label="Menu principal" class="menu">
+        <a class="dd-trigger" href="blog-sch.html">Blog</a>
+        <a class="dd-trigger" href="premium.html">Premium</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="btn btn-outline" href="index.html">Voltar</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="blog-hero">
+    <h1>CONTEÚDO PREMIUM</h1>
+    <h2>Acesso por assinatura (membros)</h2>
+    <div class="gold-line"></div>
+  </section>
+
+  <section class="blog-wrap">
+    <div class="container">
+      <div class="blog-grid">
+        <div>
+          <article class="blog-card" style="padding:22px;">
+            <h3 style="margin:0 0 8px;font-size:22px;line-height:1.25;color:var(--text);">Status do acesso</h3>
+            <p style="margin:0 0 14px;color:var(--text);opacity:.92;line-height:1.75;text-align:justify;" id="premium-status">Carregando…</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn" id="btn-login" type="button">Entrar</button>
+              <button class="btn btn-outline" id="btn-logout" type="button" style="display:none;">Sair</button>
+              <a class="btn btn-outline" href="index.html">Voltar ao acervo</a>
+            </div>
+          </article>
+
+          <div style="height:18px"></div>
+
+          <section aria-label="Lista Premium" style="margin-top:0;">
+            <div class="posts-grid-2" style="display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:22px;">
+              {% for post in collections.premiumPosts | reverse %}
+              <article class="blog-card" style="padding:22px;">
+                <div aria-hidden="true" style="height:140px;border-radius:14px;border:1px solid rgba(212,175,55,.28);background-image: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.80)), url(assets/posts/{{ post.data.cover }}); background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
+                <div style="height:14px"></div>
+                <h3 style="margin:0 0 8px;font-size:22px;line-height:1.25;color:var(--text);">{{ post.data.title }}</h3>
+                <div class="meta" style="margin-bottom:10px;">{{ post.data.category }}</div>
+                <p style="margin:0 0 14px;color:var(--text);opacity:.92;line-height:1.75;text-align:justify;">{{ post.data.excerpt }}</p>
+                <a class="btn btn-outline" href="#" data-premium-slug="{{ post.data.slug }}">Abrir (Premium)</a>
+              </article>
+              {% endfor %}
+            </div>
+          </section>
+
+          <div style="height:18px"></div>
+
+          <article class="blog-card" style="padding:22px; display:none;" id="premium-viewer">
+            <h2 style="margin:0 0 10px;color:var(--text);" id="premium-title"></h2>
+            <div class="meta" style="margin-bottom:18px;" id="premium-meta"></div>
+            <div style="font-size:19px; line-height:1.95; color:var(--text);" id="premium-body"></div>
+          </article>
+        </div>
+
+        <aside class="blog-sidebar">
+          <div class="blog-card" style="padding:18px;">
+            <div class="meta" style="margin-bottom:8px;">Observação técnica</div>
+            <p style="margin:0; opacity:.9; line-height:1.7; text-align:justify;">
+              O conteúdo premium é servido via Function e liberado apenas para usuários logados com permissão. 
+              Se você estiver em modo “vitrine” (sem login), os posts não abrem.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+  (function(){
+    const statusEl = document.getElementById('premium-status');
+    const btnLogin = document.getElementById('btn-login');
+    const btnLogout = document.getElementById('btn-logout');
+    const viewer = document.getElementById('premium-viewer');
+    const vTitle = document.getElementById('premium-title');
+    const vMeta = document.getElementById('premium-meta');
+    const vBody = document.getElementById('premium-body');
+
+    function getUser(){ return window.netlifyIdentity && window.netlifyIdentity.currentUser(); }
+
+    function setStatus(){
+      const user = getUser();
+      if(!user){
+        statusEl.textContent = "Você não está logada. Entre para verificar acesso premium.";
+        btnLogout.style.display = "none";
+        return;
+      }
+      btnLogout.style.display = "inline-flex";
+      const roles = (user.app_metadata && user.app_metadata.roles) || [];
+      statusEl.textContent = roles.includes("premium")
+        ? "Acesso PREMIUM ATIVO ✅"
+        : "Você está logada, mas sem acesso premium. Para liberar, é necessário pagamento/assinatura.";
+    }
+
+    btnLogin.addEventListener('click', ()=> window.netlifyIdentity && window.netlifyIdentity.open());
+    btnLogout.addEventListener('click', ()=> window.netlifyIdentity && window.netlifyIdentity.logout());
+
+    document.addEventListener('click', async (e)=>{
+      const a = e.target.closest('a[data-premium-slug]');
+      if(!a) return;
+      e.preventDefault();
+
+      const user = getUser();
+      if(!user){
+        window.netlifyIdentity.open();
+        return;
+      }
+      const token = await user.jwt();
+      const slug = a.getAttribute('data-premium-slug');
+
+      const res = await fetch('/.netlify/functions/premium?slug=' + encodeURIComponent(slug), {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+
+      if(!res.ok){
+        const msg = await res.text();
+        alert(msg || "Acesso negado.");
+        return;
+      }
+
+      const payload = await res.json();
+      vTitle.textContent = payload.title || "Premium";
+      vMeta.textContent = payload.category || "Premium";
+      vBody.innerHTML = payload.html || "";
+      viewer.style.display = "block";
+      viewer.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+
+    if(window.netlifyIdentity){
+      window.netlifyIdentity.on('init', setStatus);
+      window.netlifyIdentity.on('login', setStatus);
+      window.netlifyIdentity.on('logout', setStatus);
+      window.netlifyIdentity.init();
+    } else {
+      statusEl.textContent = "Netlify Identity não carregou. Verifique se o script foi bloqueado.";
+    }
+  })();
+</script>
+</body>
+</html>
